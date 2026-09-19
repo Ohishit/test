@@ -3,111 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>校园机会墙</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="httpscdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        blueBanner: '#4255e8',
-                        tagOfficial: '#3478ed',
-                        tagStudent: '#e27c22',
-                        tagCheck: '#999999'
-                    }
-                }
-            }
-        }
-    </script>
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .banner-gradient {
-                background: linear-gradient(135deg, #4361ee, #3a0ca3);
-            }
-            .card-border-official {
-                border-left:4px solid #3478ed;
-            }
-            .card-border-student {
-                border-left:4px solid #e27c22;
-            }
-            .card-border-warn {
-                border-left:4px solid #ff5c33;
-            }
-        }
+    <title>校园活动与机会聚合平台</title>
+    <style>
+        body { font-family: 'PingFang SC', sans-serif; background: #f5f7fa; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #333; font-size: 22px; }
+        .filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filters button { flex: 1; padding: 8px; border: 1px solid #ddd; background: #fff; border-radius: 20px; cursor: pointer; }
+        .filters button.active { background: #007bff; color: white; border-color: #007bff; }
+        .event-list { list-style: none; padding: 0; }
+        .event-item { border-bottom: 1px solid #eee; padding: 15px 0; }
+        .event-item h3 { margin: 0 0 8px 0; font-size: 16px; color: #333; }
+        .event-meta { font-size: 13px; color: #666; margin-bottom: 8px; display: flex; gap: 10px; }
+        .tag { padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+        .tag.lecture { background: #e3f2fd; color: #1976d2; }
+        .tag.student { background: #fff3e0; color: #f57c00; }
+        .publish-box { margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee; }
+        .publish-box input, .publish-box textarea { width: 100%; margin-bottom: 10px; padding: 8px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        .publish-box button { width: 100%; padding: 10px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; }
     </style>
 </head>
-<body class="bg-slate-100 p-4 md:p-8">
-    <div class="max-w-3xl mx-auto">
-        <!-- 顶部蓝色Banner（CSS渐变，不用图片） -->
-        <div class="banner-gradient rounded-xl p-6 text-white mb-6">
-            <div class="text-sm opacity-80 mb-2">校园生活 · 一站掌握</div>
-            <h1 class="text-3xl font-bold">校园机会墙</h1>
-            <p class="mt-2 opacity-90">讲座、竞赛、招募与同学发起的活动，清晰地汇聚在这里。</p >
-        </div>
-
-        <!-- 标签栏 -->
-        <div class="bg-white rounded-lg p-2 flex items-center justify-between mb-5">
-            <div class="flex gap-2">
-                <button class="px-3 py-1 rounded bg-blue-500 text-white text-sm">全部</button>
-                <button class="px-3 py-1 rounded bg-gray-100 text-gray-700 text-sm hover:bg-gray-200">官方活动</button>
-                <button class="px-3 py-1 rounded bg-gray-100 text-gray-700 text-sm hover:bg-gray-200">学生发布</button>
-            </div>
-            <span class="text-gray-500 text-sm">4条信息</span>
-        </div>
-
-        <!-- 活动列表 -->
-        <div class="space-y-4">
-            <!-- 蓝桥杯 -->
-            <div class="bg-white rounded-xl p-4 card-border-official">
-                <div class="flex justify-between">
-                    <h3 class="font-semibold">“蓝桥杯”程序设计校内训练营</h3>
-                    <span class="text-tagOfficial text-sm">官方发布</span>
-                </div>
-                <div class="text-gray-500 text-sm mt-2">
-                    <p><i class="fa fa-clock-o mr-1"></i>9月24日 22:00 报名截止 &nbsp; <i class="fa fa-user mr-1"></i>面向全校学生</p >
-                    <p class="mt-1">原计划9月20日起每周六19:00训练，零基础也可以参加。</p >
-                </div>
-            </div>
-
-            <!-- AI公开课 -->
-            <div class="bg-white rounded-xl p-4 card-border-official">
-                <div class="flex justify-between">
-                    <h3 class="font-semibold">AI应用入门公开课</h3>
-                    <span class="text-tagOfficial text-sm">官方发布</span>
-                </div>
-                <div class="text-gray-500 text-sm mt-2">
-                    <p><i class="fa fa-clock-o mr-1"></i>9月19日 19:00 &nbsp; <i class="fa fa-map-marker mr-1"></i>计算机学院教学楼</p >
-                    <p class="mt-1">面向全校学生，无需报名，预计90分钟。</p >
-                </div>
-            </div>
-
-            <!-- 约球 -->
-            <div class="bg-white rounded-xl p-4 card-border-student">
-                <div class="flex justify-between">
-                    <h3 class="font-semibold">学生个人发布·约球</h3>
-                    <span class="text-tagStudent text-sm">学生发布</span>
-                </div>
-                <div class="text-gray-500 text-sm mt-2">
-                    <p><i class="fa fa-clock-o mr-1"></i>9月20日 16:00 &nbsp; <i class="fa fa-users mr-1"></i>计划6-8人</p >
-                    <p class="mt-1">费用AA，学生个人发起。</p >
-                    <p class="mt-1 text-amber-600"><i class="fa fa-exclamation-triangle mr-1"></i>场地待最终确认</p >
-                </div>
-            </div>
-
-            <!-- 疑似推广 -->
-            <div class="bg-white rounded-xl p-4 card-border-warn">
-                <div class="flex justify-between">
-                    <h3 class="font-semibold">疑似推广信息</h3>
-                    <span class="text-tagCheck text-sm">待核实</span>
-                </div>
-                <div class="text-gray-500 text-sm mt-2">
-                    <p><i class="fa fa-clock-o mr-1"></i>时间未提供 &nbsp; <i class="fa fa-user mr-1"></i>来源不明</p >
-                    <p class="mt-1">称“零门槛、日结”，要求添加私人微信获取详情。</p >
-                    <p class="mt-1 text-red-500"><i class="fa fa-exclamation-triangle mr-1"></i>未提供主办方、地点和完整内容，请注意辨别</p >
-                </div>
-            </div>
-        </div>
+<body>
+<div class="container">
+    <h1>📅 校园机会墙</h1>
+    
+    <div class="filters">
+        <button class="active" onclick="filter('all')">全部</button>
+        <button onclick="filter('lecture')">讲座课程</button>
+        <button onclick="filter('student')">学生发布</button>
     </div>
+
+    <ul class="event-list" id="eventList">
+        <!-- 数据部分：你可以在这里按题目01、02等替换成真实题目数据 -->
+        <li class="event-item lecture">
+            <h3>“蓝桥杯”程序设计校内训练营</h3>
+            <div class="event-meta"><span>🕒 9月24日22:00报名截止</span><span>🎓 面向全校学生，零基础可参加</span></div>
+            <p style="font-size:14px;color:#555;margin:0;">每周六 19:00 训练，帮助同学准备竞赛。</p >
+        </li>
+        <li class="event-item student">
+            <h3>学生个人发布 - 约球</h3>
+            <div class="event-meta"><span>🕒 9月20日16:00</span><span>👥 计划6-8人</span></div>
+            <p style="font-size:14px;color:#555;margin:0;">费用AA，场地待确认。感兴趣的同学可以联系发起人。</p >
+        </li>
+        <li class="event-item lecture">
+            <h3>Web开发零基础学习小组</h3>
+            <div class="event-meta"><span>🕒 9月23日起每周三 19:30，共6周</span><span>🎓 限30人，满员即止</span></div>
+            <p style="font-size:14px;color:#555;margin:0;">零基础入门 Web 开发，适合对前端感兴趣的同学。</p >
+        </li>
+        <!-- 数据结束 -->
+    </ul>
+
+    <div class="publish-box">
+        <h3>📢 自主发布信息</h3>
+        <input type="text" id="pubTitle" placeholder="活动/招募标题（如：寻找篮球搭子）">
+        <textarea id="pubDesc" rows="2" placeholder="简单描述一下你的需求..."></textarea>
+        <button onclick="addEvent()">发布到列表</button>
+    </div>
+</div>
+
+<script>
+    // 从本地存储读取已有的用户发布信息
+    let userEvents = JSON.parse(localStorage.getItem('userEvents') || '[]');
+    
+    function renderUserEvents() {
+        const list = document.getElementById('eventList');
+        // 先移除之前已经渲染的用户发布项
+        document.querySelectorAll('.user-published').forEach(el => el.remove());
+        
+        userEvents.forEach((evt, index) => {
+            const li = document.createElement('li');
+            li.className = 'event-item student user-published';
+            li.innerHTML = `<h3>${evt.title}</h3><div class="event-meta"><span>👤 个人发布</span></div><p style="font-size:14px;color:#555;margin:0;">${evt.desc}</p >`;
+            list.appendChild(li);
+        });
+    }
+
+    function addEvent() {
+        const title = document.getElementById('pubTitle').value.trim();
+        const desc = document.getElementById('pubDesc').value.trim();
+        
+        if (!title) { alert('请输入标题'); return; }
+        
+        userEvents.push({ title: title, desc: desc || '暂无描述' });
+        localStorage.setItem('userEvents', JSON.stringify(userEvents)); // 保存到本地，刷新不丢失
+        
+        document.getElementById('pubTitle').value = '';
+        document.getElementById('pubDesc').value = '';
+        
+        renderUserEvents(); // 刷新列表
+        alert('发布成功！');
+    }
+
+    function filter(type) {
+        document.querySelectorAll('.filters button').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        const items = document.querySelectorAll('.event-item');
+        items.forEach(item => {
+            if (type === 'all' || item.classList.contains(type)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    // 页面加载时，把之前存在本地的用户发布信息展示出来
+    window.onload = renderUserEvents;
+</script>
 </body>
 </html>
