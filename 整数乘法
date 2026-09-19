@@ -1,0 +1,15 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+    int a, b; // 定义两个整数变量
+    
+    cout << "请输入两个整数（用空格隔开）: "; 
+    cin >> a >> b; // 接收用户输入
+    
+    int product = a * b; // 进行乘法运算，结果存到 product 里
+    
+    cout << "它们的积是: " << product << endl; // 输出结果
+    
+    return 0;
+}
