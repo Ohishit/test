@@ -3,102 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>校园活动与机会聚合平台</title>
+    <title>校园机会墙 - 活动与招募聚合</title>
     <style>
-        body { font-family: 'PingFang SC', sans-serif; background: #f5f7fa; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #333; font-size: 22px; }
-        .filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .filters button { flex: 1; padding: 8px; border: 1px solid #ddd; background: #fff; border-radius: 20px; cursor: pointer; }
-        .filters button.active { background: #007bff; color: white; border-color: #007bff; }
-        .event-list { list-style: none; padding: 0; }
-        .event-item { border-bottom: 1px solid #eee; padding: 15px 0; }
-        .event-item h3 { margin: 0 0 8px 0; font-size: 16px; color: #333; }
-        .event-meta { font-size: 13px; color: #666; margin-bottom: 8px; display: flex; gap: 10px; }
-        .tag { padding: 2px 6px; border-radius: 4px; font-size: 12px; }
-        .tag.lecture { background: #e3f2fd; color: #1976d2; }
-        .tag.student { background: #fff3e0; color: #f57c00; }
-        .publish-box { margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee; }
-        .publish-box input, .publish-box textarea { width: 100%; margin-bottom: 10px; padding: 8px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        .publish-box button { width: 100%; padding: 10px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; }
+        :root { --primary: #4A90E2; --bg: #F4F7F9; --text: #333; --text-light: #777; --white: #fff; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 20px; }
+        .app-container { max-width: 640px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 25px; }
+        header h1 { font-size: 26px; color: #2c3e50; margin-bottom: 8px; letter-spacing: 1px; }
+        header p { color: var(--text-light); font-size: 14px; }
+        
+        .filter-tabs { display: flex; background: #e0e6ed; padding: 4px; border-radius: 12px; margin-bottom: 20px; }
+        .filter-tabs button { flex: 1; padding: 10px; border: none; background: transparent; border-radius: 8px; font-size: 14px; color: #555; cursor: pointer; transition: all 0.2s; }
+        .filter-tabs button.active { background: var(--white); color: var(--primary); font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+        .card { background: var(--white); border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border-left: 4px solid transparent; transition: transform 0.2s; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.06); }
+        .card.lecture { border-left-color: #4A90E2; }
+        .card.student { border-left-color: #F5A623; }
+        
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .card h3 { font-size: 17px; color: #2c3e50; margin-right: 10px; }
+        .tag { padding: 3px 8px; border-radius: 6px; font-size: 12px; white-space: nowrap; }
+        .tag.lecture-tag { background: #EBF4FF; color: #4A90E2; }
+        .tag.student-tag { background: #FFF5E6; color: #F5A623; }
+        
+        .meta-info { display: flex; flex-wrap: wrap; gap: 15px; font-size: 13px; color: var(--text-light); margin-bottom: 12px; }
+        .meta-info span { display: flex; align-items: center; gap: 5px; }
+        
+        .card-desc { font-size: 14px; color: #555; line-height: 1.5; }
+        .uncertainty { font-size: 13px; color: #e74c3c; margin-top: 8px; background: #FDF2F2; padding: 6px 10px; border-radius: 6px; }
+
+        .publish-section { background: var(--white); border-radius: 16px; padding: 25px; margin-top: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        .publish-section h2 { font-size: 18px; color: #2c3e50; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; color: #555; margin-bottom: 6px; font-weight: 500; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #e0e6ed; border-radius: 8px; font-size: 14px; font-family: inherit; transition: border-color 0.2s; outline: none; }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .submit-btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 5px; }
+        .submit-btn:hover { background: #357ABD; }
+        .submit-btn:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>📅 校园机会墙</h1>
-    
-    <div class="filters">
-        <button class="active" onclick="filter('all')">全部</button>
+<div class="app-container">
+    <header>
+        <h1>📅 校园机会墙</h1>
+        <p>汇聚讲座、竞赛、招募与自发活动信息</p >
+    </header>
+
+    <div class="filter-tabs">
+        <button class="active" onclick="filter('all')">全部信息</button>
         <button onclick="filter('lecture')">讲座课程</button>
         <button onclick="filter('student')">学生发布</button>
     </div>
 
-    <ul class="event-list" id="eventList">
-        <!-- 数据部分：你可以在这里按题目01、02等替换成真实题目数据 -->
-        <li class="event-item lecture">
-            <h3>“蓝桥杯”程序设计校内训练营</h3>
-            <div class="event-meta"><span>🕒 9月24日22:00报名截止</span><span>🎓 面向全校学生，零基础可参加</span></div>
-            <p style="font-size:14px;color:#555;margin:0;">每周六 19:00 训练，帮助同学准备竞赛。</p >
-        </li>
-        <li class="event-item student">
-            <h3>学生个人发布 - 约球</h3>
-            <div class="event-meta"><span>🕒 9月20日16:00</span><span>👥 计划6-8人</span></div>
-            <p style="font-size:14px;color:#555;margin:0;">费用AA，场地待确认。感兴趣的同学可以联系发起人。</p >
-        </li>
-        <li class="event-item lecture">
-            <h3>Web开发零基础学习小组</h3>
-            <div class="event-meta"><span>🕒 9月23日起每周三 19:30，共6周</span><span>🎓 限30人，满员即止</span></div>
-            <p style="font-size:14px;color:#555;margin:0;">零基础入门 Web 开发，适合对前端感兴趣的同学。</p >
-        </li>
-        <!-- 数据结束 -->
-    </ul>
+    <div id="eventList">
+        <!-- 题目数据：官方活动 -->
+        <div class="card lecture">
+            <div class="card-header">
+                <h3>“蓝桥杯”程序设计校内训练营</h3>
+                <span class="tag lecture-tag">官方发布</span>
+            </div>
+            <div class="meta-info">
+                <span>🕒 9月24日 22:00报名截止</span>
+                <span>🎓 面向全校学生</span>
+            </div>
+            <p class="card-desc">原计划9月20日起每周六19:00训练，零基础可参加。</p >
+        </div>
 
-    <div class="publish-box">
-        <h3>📢 自主发布信息</h3>
-        <input type="text" id="pubTitle" placeholder="活动/招募标题（如：寻找篮球搭子）">
-        <textarea id="pubDesc" rows="2" placeholder="简单描述一下你的需求..."></textarea>
-        <button onclick="addEvent()">发布到列表</button>
+        <div class="card lecture">
+            <div class="card-header">
+                <h3>AI应用入门公开课</h3>
+                <span class="tag lecture-tag">官方发布</span>
+            </div>
+            <div class="meta-info">
+                <span>🕒 9月19日 19:00</span>
+                <span>📍 计算机学院教学楼</span>
+            </div>
+            <p class="card-desc">面向全校学生，无需报名，预计90分钟。</p >
+        </div>
+
+        <!-- 题目数据：学生发布（体现信息不完整/待确认） -->
+        <div class="card student">
+            <div class="card-header">
+                <h3>学生个人发布 - 约球</h3>
+                <span class="tag student-tag">学生发布</span>
+            </div>
+            <div class="meta-info">
+                <span>🕒 9月20日 16:00</span>
+                <span>👥 计划6-8人</span>
+            </div>
+            <p class="card-desc">费用AA，学生个人发布。</p >
+            <div class="uncertainty">⚠️ 场地待最终确认</div>
+        </div>
+
+        <div class="card student">
+            <div class="card-header">
+                <h3>疑似推广信息</h3>
+                <span class="tag student-tag">待核实</span>
+            </div>
+            <div class="meta-info">
+                <span>🕒 时间未提供</span>
+                <span>👤 来源不明</span>
+            </div>
+            <p class="card-desc">称“零门槛、日结”，要求添加私人微信获取详情。</p >
+            <div class="uncertainty">⚠️ 未提供主办方、地点和完整内容，请注意辨别</div>
+        </div>
+    </div>
+
+    <div class="publish-section">
+        <h2>📢 自主发布活动/招募</h2>
+        <div class="form-group">
+            <label>标题</label>
+            <input type="text" id="pubTitle" placeholder="例如：寻找篮球搭子 / 招募项目成员">
+        </div>
+        <div class="form-group">
+            <label>详情描述</label>
+            <textarea id="pubDesc" placeholder="简单描述一下你的需求、时间和地点..."></textarea>
+        </div>
+        <button class="submit-btn" onclick="addEvent()">发布信息</button>
     </div>
 </div>
 
 <script>
-    // 从本地存储读取已有的用户发布信息
     let userEvents = JSON.parse(localStorage.getItem('userEvents') || '[]');
     
     function renderUserEvents() {
         const list = document.getElementById('eventList');
-        // 先移除之前已经渲染的用户发布项
         document.querySelectorAll('.user-published').forEach(el => el.remove());
         
-        userEvents.forEach((evt, index) => {
-            const li = document.createElement('li');
-            li.className = 'event-item student user-published';
-            li.innerHTML = `<h3>${evt.title}</h3><div class="event-meta"><span>👤 个人发布</span></div><p style="font-size:14px;color:#555;margin:0;">${evt.desc}</p >`;
-            list.appendChild(li);
+        userEvents.forEach((evt) => {
+            const div = document.createElement('div');
+            div.className = 'card student user-published';
+            div.innerHTML = `
+                <div class="card-header">
+                    <h3>${evt.title}</h3>
+                    <span class="tag student-tag">我发布的</span>
+                </div>
+                <div class="meta-info"><span>👤 个人发布</span></div>
+                <p class="card-desc">${evt.desc}</p >
+            `;
+            list.appendChild(div);
         });
     }
 
     function addEvent() {
         const title = document.getElementById('pubTitle').value.trim();
         const desc = document.getElementById('pubDesc').value.trim();
-        
         if (!title) { alert('请输入标题'); return; }
         
-        userEvents.push({ title: title, desc: desc || '暂无描述' });
-        localStorage.setItem('userEvents', JSON.stringify(userEvents)); // 保存到本地，刷新不丢失
+        userEvents.push({ title: title, desc: desc || '暂无详细描述' });
+        localStorage.setItem('userEvents', JSON.stringify(userEvents));
         
         document.getElementById('pubTitle').value = '';
         document.getElementById('pubDesc').value = '';
         
-        renderUserEvents(); // 刷新列表
-        alert('发布成功！');
+        renderUserEvents();
+        alert('发布成功！您的信息已进入列表。');
     }
 
     function filter(type) {
-        document.querySelectorAll('.filters button').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.filter-tabs button').forEach(b => b.classList.remove('active'));
         event.target.classList.add('active');
         
-        const items = document.querySelectorAll('.event-item');
+        const items = document.querySelectorAll('.card');
         items.forEach(item => {
             if (type === 'all' || item.classList.contains(type)) {
                 item.style.display = 'block';
@@ -108,7 +178,6 @@
         });
     }
 
-    // 页面加载时，把之前存在本地的用户发布信息展示出来
     window.onload = renderUserEvents;
 </script>
 </body>
