@@ -1,259 +1,192 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#4f46e5">
-  <title>校园机会墙</title>
-  <style>
-    :root { --ink:#172033; --muted:#667085; --line:#e7eaf1; --paper:#fff; --bg:#f5f7fb; --brand:#4f46e5; --brand-dark:#3730a3; --official:#2563eb; --student:#d97706; --danger:#b42318; }
-    * { box-sizing:border-box; }
-    body { margin:0; background:radial-gradient(circle at 10% -10%,#e6e8ff 0,transparent 31rem),var(--bg); color:var(--ink); font:15px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
-    button,input,textarea { font:inherit; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园机会墙 - 活动与招募聚合</title>
+    <style>
+        :root { --primary: #4A90E2; --bg: #F4F7F9; --text: #333; --text-light: #777; --white: #fff; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 15px; }
+        .app-container { max-width: 600px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 20px; }
+        header h1 { font-size: 24px; color: #2c3e50; margin-bottom: 5px; }
+        header p { color: var(--text-light); font-size: 13px; }
+        
+        .filter-tabs { display: flex; background: #e0e6ed; padding: 4px; border-radius: 12px; margin-bottom: 20px; }
+        .filter-tabs button { flex: 1; padding: 8px; border: none; background: transparent; border-radius: 8px; font-size: 14px; color: #555; cursor: pointer; transition: all 0.2s; }
+        .filter-tabs button.active { background: var(--white); color: var(--primary); font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-    .shell { width:min(100% - 32px,760px); margin:auto; padding:32px 0 56px; }
+        /* 卡片样式 */
+        .card { background: var(--white); border-radius: 14px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); overflow: hidden; border-left: 4px solid transparent; transition: transform 0.2s; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+        .card.lecture { border-left-color: #4A90E2; }
+        .card.student { border-left-color: #F5A623; }
+        .card-img { width: 100%; height: 140px; background-color: #eee; object-fit: cover; display: block; }
+        .card-body { padding: 15px; }
+        
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .card h3 { font-size: 16px; color: #2c3e50; margin-right: 10px; }
+        .tag { padding: 2px 8px; border-radius: 6px; font-size: 12px; white-space: nowrap; }
+        .tag.lecture-tag { background: #EBF4FF; color: #4A90E2; }
+        .tag.student-tag { background: #FFF5E6; color: #F5A623; }
+        
+        .meta-info { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .meta-info span { display: flex; align-items: center; gap: 4px; }
+        
+        .card-desc { font-size: 13px; color: #555; line-height: 1.5; }
+        .uncertainty { font-size: 12px; color: #e74c3c; margin-top: 8px; background: #FDF2F2; padding: 6px 10px; border-radius: 6px; }
 
-    .hero { position:relative; overflow:hidden; padding:28px; border-radius:24px; background:linear-gradient(135deg,#4f46e5,#6d5dfc 58%,#8b7cff); color:#fff; box-shadow:0 18px 42px #4038b84a; }
-    .hero::after { content:""; position:absolute; width:190px; height:190px; right:-60px; top:-90px; border:28px solid #ffffff2e; border-radius:50%; }
-    .eyebrow { display:inline-flex; gap:7px; align-items:center; padding:5px 10px; border:1px solid #ffffff3d; border-radius:999px; background:#ffffff1c; font-size:12px; }
-    h1 { position:relative; margin:12px 0 4px; font-size:clamp(27px,6vw,38px); letter-spacing:-.045em; }
-    .hero p { position:relative; margin:0; color:#eeedff; }
-
-    .toolbar { display:flex; gap:10px; align-items:center; margin:22px 0 16px; }
-    .tabs { display:flex; gap:5px; flex:1; overflow:auto; padding:4px; background:#e9ecf5; border-radius:13px; }
-    .tab { white-space:nowrap; border:0; border-radius:9px; padding:9px 13px; background:transparent; color:#596174; cursor:pointer; transition:.18s; }
-    .tab:hover { color:var(--brand); }
-    .tab.active { background:#fff; color:var(--brand); font-weight:700; box-shadow:0 1px 5px #1d293914; }
-    .count { white-space:nowrap; color:var(--muted); font-size:13px; }
-
-    .event-list { display:grid; gap:12px; }
-    .card { display:grid; grid-template-columns:5px 1fr; overflow:hidden; background:var(--paper); border:1px solid var(--line); border-radius:18px; box-shadow:0 5px 15px #17203308; transition:transform .18s,box-shadow .18s; }
-    .card:hover { transform:translateY(-2px); box-shadow:0 12px 25px #17203310; }
-    .stripe { background:var(--official); }
-    .student .stripe { background:var(--student); }
-    .content { padding:18px 18px 17px; }
-    .card-top { display:flex; align-items:flex-start; gap:12px; justify-content:space-between; }
-    h2 { margin:0; font-size:17px; line-height:1.35; letter-spacing:-.02em; }
-    .badge { flex:none; padding:4px 8px; border-radius:999px; font-size:12px; font-weight:700; background:#eff6ff; color:var(--official); }
-    .student .badge { background:#fff7ed; color:#b45309; }
-    .details { display:flex; flex-wrap:wrap; gap:7px 15px; margin:11px 0 9px; color:var(--muted); font-size:13px; }
-    .details span { display:flex; align-items:center; gap:5px; }
-    .description { margin:0; color:#475467; }
-    .notice { display:flex; gap:7px; align-items:flex-start; margin-top:12px; padding:8px 10px; border-radius:9px; background:#fff4f2; color:var(--danger); font-size:13px; }
-
-    .publish { margin-top:28px; padding:24px; background:#fff; border:1px solid var(--line); border-radius:20px; box-shadow:0 8px 22px #17203308; }
-    .publish-head { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
-    .publish-icon { display:grid; place-items:center; width:38px; height:38px; border-radius:12px; background:#ede9fe; font-size:18px; }
-    .publish h2 { font-size:19px; }
-    .publish small { color:var(--muted); }
-    label { display:block; margin:0 0 6px; color:#344054; font-size:13px; font-weight:650; }
-    .field { margin-bottom:15px; }
-    input,textarea { width:100%; border:1px solid #d6dbe6; border-radius:10px; padding:11px 12px; outline:0; color:var(--ink); background:#fff; transition:.18s; }
-    textarea { min-height:102px; resize:vertical; }
-    input:focus,textarea:focus { border-color:#8179f8; box-shadow:0 0 0 4px #4f46e51a; }
-
-    .submit { width:100%; border:0; padding:12px 16px; border-radius:10px; background:var(--brand); color:#fff; font-weight:750; cursor:pointer; box-shadow:0 5px 12px #4f46e53d; transition:.18s; }
-    .submit:hover { background:var(--brand-dark); transform:translateY(-1px); }
-
-    .empty { padding:26px; text-align:center; border:1px dashed #cfd5e1; border-radius:16px; color:var(--muted); }
-    .toast { position:fixed; left:50%; bottom:24px; transform:translate(-50%,120px); padding:11px 16px; border-radius:10px; background:#172033; color:#fff; box-shadow:0 10px 25px #17203342; transition:transform .25s; }
-    .toast.show { transform:translate(-50%,0); }
-
-    @media (max-width:520px) {
-      .shell { width:min(100% - 24px,760px); padding-top:18px; }
-      .hero { padding:23px; border-radius:20px; }
-      .toolbar { align-items:flex-start; flex-direction:column; }
-      .content { padding:16px; }
-      .card-top { gap:8px; }
-      .badge { font-size:11px; }
-      .publish { padding:19px; }
-    }
-  </style>
+        /* 发布区域 */
+        .publish-section { background: var(--white); border-radius: 14px; padding: 20px; margin-top: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+        .publish-section h2 { font-size: 17px; color: #2c3e50; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 13px; color: #555; margin-bottom: 5px; font-weight: 500; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #e0e6ed; border-radius: 8px; font-size: 14px; font-family: inherit; transition: border-color 0.2s; outline: none; }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); }
+        .form-group textarea { resize: vertical; min-height: 70px; }
+        .submit-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 5px; }
+        .submit-btn:hover { background: #357ABD; }
+    </style>
 </head>
 <body>
-  <main class="shell">
-    <header class="hero">
-      <span class="eyebrow">✦ 校园生活 · 一站掌握</span>
-      <h1>校园机会墙</h1>
-      <p>讲座、竞赛、招募与同学发起的活动，清晰地汇聚在这里。</p>
+<div class="app-container">
+    <header>
+        <h1>📅 校园机会墙</h1>
+        <p>汇聚讲座、竞赛、招募与自发活动信息</p >
     </header>
 
-    <div class="toolbar">
-      <nav class="tabs" aria-label="信息筛选">
-        <button class="tab active" data-filter="all">全部</button>
-        <button class="tab" data-filter="lecture">官方活动</button>
-        <button class="tab" data-filter="student">学生发布</button>
-      </nav>
-      <span id="count" class="count"></span>
+    <div class="filter-tabs">
+        <button class="active" onclick="filter('all')">全部信息</button>
+        <button onclick="filter('lecture')">讲座课程</button>
+        <button onclick="filter('student')">学生发布</button>
     </div>
 
-    <section id="eventList" class="event-list" aria-live="polite"></section>
+    <div id="eventList"></div>
 
-    <section class="publish" aria-labelledby="publishTitle">
-      <div class="publish-head">
-        <div class="publish-icon">📣</div>
-        <div>
-          <h2 id="publishTitle">发布一条信息</h2>
-          <small>请写清楚时间、地点和联系方式，方便大家参与。</small>
+    <div class="publish-section">
+        <h2>📢 自主发布活动/招募</h2>
+        <div class="form-group">
+            <label>标题</label>
+            <input type="text" id="pubTitle" placeholder="例如：寻找篮球搭子 / 招募项目成员">
         </div>
-      </div>
-
-      <form id="publishForm">
-        <div class="field">
-          <label for="pubTitle">活动标题</label>
-          <input id="pubTitle" required maxlength="60" placeholder="例如：寻找篮球搭子 / 招募项目成员">
+        <div class="form-group">
+            <label>详情描述</label>
+            <textarea id="pubDesc" placeholder="简单描述一下你的需求、时间和地点..."></textarea>
         </div>
-        <div class="field">
-          <label for="pubDesc">详情说明</label>
-          <textarea id="pubDesc" maxlength="300" placeholder="请描述时间、地点、参与方式等信息…"></textarea>
-        </div>
-        <button class="submit" type="submit">发布信息</button>
-      </form>
-    </section>
-  </main>
+        <button class="submit-btn" onclick="addEvent()">发布信息</button>
+    </div>
+</div>
 
-  <div id="toast" class="toast" role="status"></div>
-
-  <script>
-    const builtIns = [
-      {
-        type: 'lecture',
-        title: '“蓝桥杯”程序设计校内训练营',
-        badge: '官方发布',
-        meta: ['🕒 9月24日 22:00 报名截止', '🎓 面向全校学生'],
-        desc: '原计划 9 月 20 日起每周六 19:00 训练，零基础也可以参加。'
-      },
-      {
-        type: 'lecture',
-        title: 'AI 应用入门公开课',
-        badge: '官方发布',
-        meta: ['🕒 9月19日 19:00', '📍 计算机学院教学楼'],
-        desc: '面向全校学生，无需报名，预计 90 分钟。'
-      },
-      {
-        type: 'student',
-        title: '学生个人发布 · 约球',
-        badge: '学生发布',
-        meta: ['🕒 9月20日 16:00', '👥 计划 6–8 人'],
-        desc: '费用 AA，学生个人发起。',
-        notice: '场地待最终确认'
-      },
-      {
-        type: 'student',
-        title: '疑似推广信息',
-        badge: '待核实',
-        meta: ['🕒 时间未提供', '👤 来源不明'],
-        desc: '称“零门槛、日结”，要求添加私人微信获取详情。',
-        notice: '未提供主办方、地点和完整内容，请注意辨别'
-      }
+<script>
+    // 模拟题目提供的数据
+    const baseEvents = [
+        {
+            type: 'lecture', title: '“蓝桥杯”程序设计校内训练营', badge: '官方发布',
+            meta: ['🕒 9月24日 22:00报名截止', '🎓 面向全校学生，零基础可参加'],
+            desc: '原计划9月20日起每周六19:00训练，帮助同学准备竞赛。',
+            cover: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=500&q=80'
+        },
+        {
+            type: 'lecture', title: 'AI应用入门公开课', badge: '官方发布',
+            meta: ['🕒 9月19日 19:00', '📍 计算机学院教学楼'],
+            desc: '面向全校学生，无需报名，预计90分钟。',
+            cover: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=500&q=80'
+        },
+        {
+            type: 'student', title: '学生个人发布 - 约球', badge: '学生发布',
+            meta: ['🕒 9月20日 16:00', '👥 计划6-8人'],
+            desc: '费用AA，学生个人发布。',
+            notice: '⚠️ 场地待最终确认',
+            cover: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=500&q=80'
+        },
+        {
+            type: 'student', title: '疑似推广信息', badge: '待核实',
+            meta: ['🕒 时间未提供', '👤 来源不明'],
+            desc: '称“零门槛、日结”，要求添加私人微信获取详情。',
+            notice: '⚠️ 未提供主办方、地点和完整内容，请注意辨别',
+            cover: 'https://images.unsplash.com/photo-1555421689-491a97ff2040?auto=format&fit=crop&w=500&q=80'
+        }
     ];
 
-    let filter = 'all';
-    let userEvents = JSON.parse(localStorage.getItem('campusWallEvents') || '[]');
+    // 从本地存储读取用户发布的信息，避免刷新丢失
+    let userEvents = JSON.parse(localStorage.getItem('userEvents') || '[]');
+    const listContainer = document.getElementById('eventList');
 
-    const list = document.querySelector('#eventList');
-    const count = document.querySelector('#count');
-    const toast = document.querySelector('#toast');
-
-    function card(event) {
-      const el = document.createElement('article');
-      el.className = `card ${event.type}`;
-      el.innerHTML = `
-        <div class="stripe"></div>
-        <div class="content">
-          <div class="card-top">
-            <h2></h2>
-            <span class="badge"></span>
-          </div>
-          <div class="details"></div>
-          <p class="description"></p>
-        </div>
-      `;
-
-      el.querySelector('h2').textContent = event.title;
-      el.querySelector('.badge').textContent = event.badge;
-
-      event.meta.forEach(item => {
-        const span = document.createElement('span');
-        span.textContent = item;
-        el.querySelector('.details').append(span);
-      });
-
-      el.querySelector('.description').textContent = event.desc;
-
-      if (event.notice) {
-        const notice = document.createElement('div');
-        notice.className = 'notice';
-        notice.textContent = '⚠ ' + event.notice;
-        el.querySelector('.content').append(notice);
-      }
-
-      return el;
-    }
-
+    // 渲染所有卡片
     function render() {
-      list.replaceChildren();
-
-      const events = [...builtIns, ...userEvents];
-      const shown = events.filter(event => filter === 'all' || event.type === filter);
-
-      shown.forEach(event => list.append(card(event)));
-
-      if (!shown.length) {
-        const empty = document.createElement('div');
-        empty.className = 'empty';
-        empty.textContent = '这个分类暂时没有信息。';
-        list.append(empty);
-      }
-
-      count.textContent = `${shown.length} 条信息`;
-    }
-
-    document.querySelectorAll('.tab').forEach(button => {
-      button.addEventListener('click', () => {
-        filter = button.dataset.filter;
-        document.querySelectorAll('.tab').forEach(tab => {
-          tab.classList.toggle('active', tab === button);
+        listContainer.innerHTML = '';
+        const allEvents = [...baseEvents, ...userEvents];
+        
+        allEvents.forEach(evt => {
+            const card = document.createElement('div');
+            card.className = `card ${evt.type}`;
+            
+            // 判断是否存在特殊提示（如场地不确定）
+            let noticeHtml = evt.notice ? `<div class="uncertainty">${evt.notice}</div>` : '';
+            
+            card.innerHTML = `
+                < img src="${evt.cover}" class="card-img" alt="${evt.title}" onerror="this.src='https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=500&q=80'">
+                <div class="card-body">
+                    <div class="card-header">
+                        <h3>${evt.title}</h3>
+                        <span class="tag ${evt.type}-tag">${evt.badge}</span>
+                    </div>
+                    <div class="meta-info">
+                        ${evt.meta.map(m => `<span>${m}</span>`).join('')}
+                    </div>
+                    <p class="card-desc">${evt.desc}</p >
+                    ${noticeHtml}
+                </div>
+            `;
+            listContainer.appendChild(card);
         });
-        render();
-      });
-    });
-
-    function notify(message) {
-      toast.textContent = message;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2300);
     }
 
-    document.querySelector('#publishForm').addEventListener('submit', event => {
-      event.preventDefault();
+    // 发布新活动
+    function addEvent() {
+        const title = document.getElementById('pubTitle').value.trim();
+        const desc = document.getElementById('pubDesc').value.trim();
+        
+        if (!title) { alert('请输入标题'); return; }
 
-      const title = document.querySelector('#pubTitle').value.trim();
-      const desc = document.querySelector('#pubDesc').value.trim();
+        const newEvent = {
+            type: 'student',
+            title: title,
+            badge: '我发布的',
+            meta: ['👤 个人发布'],
+            desc: desc || '暂无详细描述',
+            cover: 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=500&q=80'
+        };
 
-      if (!title) return;
+        userEvents.push(newEvent);
+        localStorage.setItem('userEvents', JSON.stringify(userEvents)); // 保存到本地
+        
+        // 清空输入框
+        document.getElementById('pubTitle').value = '';
+        document.getElementById('pubDesc').value = '';
+        
+        render(); // 重新渲染列表
+        alert('发布成功！您的信息已进入列表。');
+    }
 
-      userEvents.push({
-        type: 'student',
-        title,
-        badge: '我发布的',
-        meta: ['👤 个人发布'],
-        desc: desc || '暂无详细说明'
-      });
+    // 分类筛选
+    function filter(type) {
+        document.querySelectorAll('.filter-tabs button').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        const items = document.querySelectorAll('.card');
+        items.forEach(item => {
+            if (type === 'all' || item.classList.contains(type)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
 
-      localStorage.setItem('campusWallEvents', JSON.stringify(userEvents));
-      event.target.reset();
-
-      filter = 'all';
-      document.querySelectorAll('.tab').forEach(tab => {
-        tab.classList.toggle('active', tab.dataset.filter === 'all');
-      });
-
-      render();
-      notify('发布成功，信息已加入列表');
-    });
-
-    render();
-  </script>
+    // 页面加载完成后渲染
+    window.onload = render;
+</script>
 </body>
 </html>
