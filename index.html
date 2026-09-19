@@ -3,111 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>校园机会墙</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="httpscdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        blueBanner: '#4255e8',
-                        tagOfficial: '#3478ed',
-                        tagStudent: '#e27c22',
-                        tagCheck: '#999999'
-                    }
-                }
-            }
-        }
-    </script>
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .banner-gradient {
-                background: linear-gradient(135deg, #4361ee, #3a0ca3);
-            }
-            .card-border-official {
-                border-left:4px solid #3478ed;
-            }
-            .card-border-student {
-                border-left:4px solid #e27c22;
-            }
-            .card-border-warn {
-                border-left:4px solid #ff5c33;
-            }
-        }
+    <title>校园机会墙 - 活动与招募聚合</title>
+    <style>
+        :root { --primary: #4A90E2; --bg: #F4F7F9; --text: #333; --text-light: #777; --white: #fff; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 15px; }
+        .app-container { max-width: 600px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 20px; }
+        header h1 { font-size: 24px; color: #2c3e50; margin-bottom: 5px; }
+        header p { color: var(--text-light); font-size: 13px; }
+        
+        .filter-tabs { display: flex; background: #e0e6ed; padding: 4px; border-radius: 12px; margin-bottom: 20px; }
+        .filter-tabs button { flex: 1; padding: 8px; border: none; background: transparent; border-radius: 8px; font-size: 14px; color: #555; cursor: pointer; transition: all 0.2s; }
+        .filter-tabs button.active { background: var(--white); color: var(--primary); font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+        /* 卡片样式 */
+        .card { background: var(--white); border-radius: 14px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); overflow: hidden; border-left: 4px solid transparent; transition: transform 0.2s; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+        .card.lecture { border-left-color: #4A90E2; }
+        .card.student { border-left-color: #F5A623; }
+        .card-img { width: 100%; height: 140px; background-color: #eee; object-fit: cover; display: block; }
+        .card-body { padding: 15px; }
+        
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .card h3 { font-size: 16px; color: #2c3e50; margin-right: 10px; }
+        .tag { padding: 2px 8px; border-radius: 6px; font-size: 12px; white-space: nowrap; }
+        .tag.lecture-tag { background: #EBF4FF; color: #4A90E2; }
+        .tag.student-tag { background: #FFF5E6; color: #F5A623; }
+        
+        .meta-info { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .meta-info span { display: flex; align-items: center; gap: 4px; }
+        
+        .card-desc { font-size: 13px; color: #555; line-height: 1.5; }
+        .uncertainty { font-size: 12px; color: #e74c3c; margin-top: 8px; background: #FDF2F2; padding: 6px 10px; border-radius: 6px; }
+
+        /* 发布区域 */
+        .publish-section { background: var(--white); border-radius: 14px; padding: 20px; margin-top: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+        .publish-section h2 { font-size: 17px; color: #2c3e50; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 13px; color: #555; margin-bottom: 5px; font-weight: 500; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #e0e6ed; border-radius: 8px; font-size: 14px; font-family: inherit; transition: border-color 0.2s; outline: none; }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); }
+        .form-group textarea { resize: vertical; min-height: 70px; }
+        .submit-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 5px; }
+        .submit-btn:hover { background: #357ABD; }
     </style>
 </head>
-<body class="bg-slate-100 p-4 md:p-8">
-    <div class="max-w-3xl mx-auto">
-        <!-- 顶部蓝色Banner（CSS渐变，不用图片） -->
-        <div class="banner-gradient rounded-xl p-6 text-white mb-6">
-            <div class="text-sm opacity-80 mb-2">校园生活 · 一站掌握</div>
-            <h1 class="text-3xl font-bold">校园机会墙</h1>
-            <p class="mt-2 opacity-90">讲座、竞赛、招募与同学发起的活动，清晰地汇聚在这里。</p >
-        </div>
+<body>
+<div class="app-container">
+    <header>
+        <h1>📅 校园机会墙</h1>
+        <p>汇聚讲座、竞赛、招募与自发活动信息</p >
+    </header>
 
-        <!-- 标签栏 -->
-        <div class="bg-white rounded-lg p-2 flex items-center justify-between mb-5">
-            <div class="flex gap-2">
-                <button class="px-3 py-1 rounded bg-blue-500 text-white text-sm">全部</button>
-                <button class="px-3 py-1 rounded bg-gray-100 text-gray-700 text-sm hover:bg-gray-200">官方活动</button>
-                <button class="px-3 py-1 rounded bg-gray-100 text-gray-700 text-sm hover:bg-gray-200">学生发布</button>
-            </div>
-            <span class="text-gray-500 text-sm">4条信息</span>
-        </div>
-
-        <!-- 活动列表 -->
-        <div class="space-y-4">
-            <!-- 蓝桥杯 -->
-            <div class="bg-white rounded-xl p-4 card-border-official">
-                <div class="flex justify-between">
-                    <h3 class="font-semibold">“蓝桥杯”程序设计校内训练营</h3>
-                    <span class="text-tagOfficial text-sm">官方发布</span>
-                </div>
-                <div class="text-gray-500 text-sm mt-2">
-                    <p><i class="fa fa-clock-o mr-1"></i>9月24日 22:00 报名截止 &nbsp; <i class="fa fa-user mr-1"></i>面向全校学生</p >
-                    <p class="mt-1">原计划9月20日起每周六19:00训练，零基础也可以参加。</p >
-                </div>
-            </div>
-
-            <!-- AI公开课 -->
-            <div class="bg-white rounded-xl p-4 card-border-official">
-                <div class="flex justify-between">
-                    <h3 class="font-semibold">AI应用入门公开课</h3>
-                    <span class="text-tagOfficial text-sm">官方发布</span>
-                </div>
-                <div class="text-gray-500 text-sm mt-2">
-                    <p><i class="fa fa-clock-o mr-1"></i>9月19日 19:00 &nbsp; <i class="fa fa-map-marker mr-1"></i>计算机学院教学楼</p >
-                    <p class="mt-1">面向全校学生，无需报名，预计90分钟。</p >
-                </div>
-            </div>
-
-            <!-- 约球 -->
-            <div class="bg-white rounded-xl p-4 card-border-student">
-                <div class="flex justify-between">
-                    <h3 class="font-semibold">学生个人发布·约球</h3>
-                    <span class="text-tagStudent text-sm">学生发布</span>
-                </div>
-                <div class="text-gray-500 text-sm mt-2">
-                    <p><i class="fa fa-clock-o mr-1"></i>9月20日 16:00 &nbsp; <i class="fa fa-users mr-1"></i>计划6-8人</p >
-                    <p class="mt-1">费用AA，学生个人发起。</p >
-                    <p class="mt-1 text-amber-600"><i class="fa fa-exclamation-triangle mr-1"></i>场地待最终确认</p >
-                </div>
-            </div>
-
-            <!-- 疑似推广 -->
-            <div class="bg-white rounded-xl p-4 card-border-warn">
-                <div class="flex justify-between">
-                    <h3 class="font-semibold">疑似推广信息</h3>
-                    <span class="text-tagCheck text-sm">待核实</span>
-                </div>
-                <div class="text-gray-500 text-sm mt-2">
-                    <p><i class="fa fa-clock-o mr-1"></i>时间未提供 &nbsp; <i class="fa fa-user mr-1"></i>来源不明</p >
-                    <p class="mt-1">称“零门槛、日结”，要求添加私人微信获取详情。</p >
-                    <p class="mt-1 text-red-500"><i class="fa fa-exclamation-triangle mr-1"></i>未提供主办方、地点和完整内容，请注意辨别</p >
-                </div>
-            </div>
-        </div>
+    <div class="filter-tabs">
+        <button class="active" onclick="filter('all')">全部信息</button>
+        <button onclick="filter('lecture')">讲座课程</button>
+        <button onclick="filter('student')">学生发布</button>
     </div>
+
+    <div id="eventList"></div>
+
+    <div class="publish-section">
+        <h2>📢 自主发布活动/招募</h2>
+        <div class="form-group">
+            <label>标题</label>
+            <input type="text" id="pubTitle" placeholder="例如：寻找篮球搭子 / 招募项目成员">
+        </div>
+        <div class="form-group">
+            <label>详情描述</label>
+            <textarea id="pubDesc" placeholder="简单描述一下你的需求、时间和地点..."></textarea>
+        </div>
+        <button class="submit-btn" onclick="addEvent()">发布信息</button>
+    </div>
+</div>
+
+<script>
+    // 模拟题目提供的数据
+    const baseEvents = [
+        {
+            type: 'lecture', title: '“蓝桥杯”程序设计校内训练营', badge: '官方发布',
+            meta: ['🕒 9月24日 22:00报名截止', '🎓 面向全校学生，零基础可参加'],
+            desc: '原计划9月20日起每周六19:00训练，帮助同学准备竞赛。',
+            cover: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=500&q=80'
+        },
+        {
+            type: 'lecture', title: 'AI应用入门公开课', badge: '官方发布',
+            meta: ['🕒 9月19日 19:00', '📍 计算机学院教学楼'],
+            desc: '面向全校学生，无需报名，预计90分钟。',
+            cover: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=500&q=80'
+        },
+        {
+            type: 'student', title: '学生个人发布 - 约球', badge: '学生发布',
+            meta: ['🕒 9月20日 16:00', '👥 计划6-8人'],
+            desc: '费用AA，学生个人发布。',
+            notice: '⚠️ 场地待最终确认',
+            cover: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=500&q=80'
+        },
+        {
+            type: 'student', title: '疑似推广信息', badge: '待核实',
+            meta: ['🕒 时间未提供', '👤 来源不明'],
+            desc: '称“零门槛、日结”，要求添加私人微信获取详情。',
+            notice: '⚠️ 未提供主办方、地点和完整内容，请注意辨别',
+            cover: 'https://images.unsplash.com/photo-1555421689-491a97ff2040?auto=format&fit=crop&w=500&q=80'
+        }
+    ];
+
+    // 从本地存储读取用户发布的信息，避免刷新丢失
+    let userEvents = JSON.parse(localStorage.getItem('userEvents') || '[]');
+    const listContainer = document.getElementById('eventList');
+
+    // 渲染所有卡片
+    function render() {
+        listContainer.innerHTML = '';
+        const allEvents = [...baseEvents, ...userEvents];
+        
+        allEvents.forEach(evt => {
+            const card = document.createElement('div');
+            card.className = `card ${evt.type}`;
+            
+            // 判断是否存在特殊提示（如场地不确定）
+            let noticeHtml = evt.notice ? `<div class="uncertainty">${evt.notice}</div>` : '';
+            
+            card.innerHTML = `
+                < img src="${evt.cover}" class="card-img" alt="${evt.title}" onerror="this.src='https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=500&q=80'">
+                <div class="card-body">
+                    <div class="card-header">
+                        <h3>${evt.title}</h3>
+                        <span class="tag ${evt.type}-tag">${evt.badge}</span>
+                    </div>
+                    <div class="meta-info">
+                        ${evt.meta.map(m => `<span>${m}</span>`).join('')}
+                    </div>
+                    <p class="card-desc">${evt.desc}</p >
+                    ${noticeHtml}
+                </div>
+            `;
+            listContainer.appendChild(card);
+        });
+    }
+
+    // 发布新活动
+    function addEvent() {
+        const title = document.getElementById('pubTitle').value.trim();
+        const desc = document.getElementById('pubDesc').value.trim();
+        
+        if (!title) { alert('请输入标题'); return; }
+
+        const newEvent = {
+            type: 'student',
+            title: title,
+            badge: '我发布的',
+            meta: ['👤 个人发布'],
+            desc: desc || '暂无详细描述',
+            cover: 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=500&q=80'
+        };
+
+        userEvents.push(newEvent);
+        localStorage.setItem('userEvents', JSON.stringify(userEvents)); // 保存到本地
+        
+        // 清空输入框
+        document.getElementById('pubTitle').value = '';
+        document.getElementById('pubDesc').value = '';
+        
+        render(); // 重新渲染列表
+        alert('发布成功！您的信息已进入列表。');
+    }
+
+    // 分类筛选
+    function filter(type) {
+        document.querySelectorAll('.filter-tabs button').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        const items = document.querySelectorAll('.card');
+        items.forEach(item => {
+            if (type === 'all' || item.classList.contains(type)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    // 页面加载完成后渲染
+    window.onload = render;
+</script>
 </body>
 </html>
